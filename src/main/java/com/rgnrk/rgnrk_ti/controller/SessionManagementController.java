@@ -1,83 +1,127 @@
 package com.rgnrk.rgnrk_ti.controller;
 
-import com.rgnrk.rgnrk_ti.model.PokerPlanningSession;
+import com.rgnrk.rgnrk_ti.api.SessionsApi;
+import com.rgnrk.rgnrk_ti.model.MemberDto;
+import com.rgnrk.rgnrk_ti.model.PokerPlanningSessionDto;
+import com.rgnrk.rgnrk_ti.model.UserStoryDto;
+import com.rgnrk.rgnrk_ti.model.VoteDto;
 import com.rgnrk.rgnrk_ti.service.PokerPlanningSessionService;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
+import com.rgnrk.rgnrk_ti.service.SessionMemberService;
+import com.rgnrk.rgnrk_ti.service.UserStoryService;
+import com.rgnrk.rgnrk_ti.service.VoteService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.CollectionUtils;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 @RestController
-@RequestMapping("/sessions")
-@Tag(name = "session management")
 @Validated
-public class SessionController {
+public class SessionManagementController implements SessionsApi {
 
     private final PokerPlanningSessionService pokerPlanningSessionService;
+    private final SessionMemberService sessionMemberService;
+    private final UserStoryService userStoryService;
+    private final VoteService voteService;
 
-    public SessionController(PokerPlanningSessionService pokerPlanningSessionService) {
+    public SessionManagementController(PokerPlanningSessionService pokerPlanningSessionService, SessionMemberService sessionMemberService, UserStoryService userStoryService, VoteService voteService) {
         this.pokerPlanningSessionService = pokerPlanningSessionService;
+        this.sessionMemberService = sessionMemberService;
+        this.userStoryService = userStoryService;
+        this.voteService = voteService;
     }
 
-    @Operation(summary = "List of existing poker planning sessions")
-    @ApiResponse(responseCode = "200", description = "A JSON array of session",
-            content = { @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = PokerPlanningSession.class))) })
-    @GetMapping
-    public ResponseEntity<List<PokerPlanningSession>> getPokerPlanningSessions() {
-        List<PokerPlanningSession> pokerPlanningSessions = pokerPlanningSessionService.getPokerPlanningSessions();
+    @Override
+    public ResponseEntity<List<PokerPlanningSessionDto>> sessionsGet() {
+        List<PokerPlanningSessionDto> pokerPlanningSessions = pokerPlanningSessionService.getPokerPlanningSessions();
         return new ResponseEntity<>(pokerPlanningSessions, HttpStatus.OK);
     }
 
-    @Operation(summary = "Creation of a new session")
-    @ApiResponse(responseCode = "201", description = "Created JSON object",
-            content = { @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = PokerPlanningSession.class))) })
-    @PostMapping
-    public ResponseEntity<PokerPlanningSession> createPokerPlanningSession(@RequestBody @Valid PokerPlanningSession session) {
-        PokerPlanningSession savedSession = pokerPlanningSessionService.createPokerPlanningSession(session);
+    @Override
+    public ResponseEntity<PokerPlanningSessionDto> sessionsPost(PokerPlanningSessionDto session) {
+        PokerPlanningSessionDto savedSession = pokerPlanningSessionService.createPokerPlanningSession(session);
         return new ResponseEntity<>(savedSession, HttpStatus.CREATED);
     }
 
-    @Operation(summary = "Session information")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "The Resource",
-                    content = { @Content(mediaType = "application/json", schema = @Schema(implementation = PokerPlanningSession.class)) }),
-            @ApiResponse(responseCode = "404", description = "Not Found", content = @Content)
-    })
-    @GetMapping("/{idSession}")
-    public ResponseEntity<PokerPlanningSession> getPokerPlanningSession(@PathVariable("idSession") String idSession) {
-        Optional<PokerPlanningSession> optionalSession = pokerPlanningSessionService.getPokerPlanningSession(UUID.fromString(idSession));
+    @Override
+    public ResponseEntity<PokerPlanningSessionDto> sessionsIdSessionGet(String idSession) {
+        Optional<PokerPlanningSessionDto> optionalSession = pokerPlanningSessionService.getPokerPlanningSession(idSession);
         return optionalSession.map(session -> new ResponseEntity<>(session, HttpStatus.OK))
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
-    @Operation(summary = "Destroy session")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Session destroyed info",
-                    content = { @Content(mediaType = "application/json", schema = @Schema(implementation = PokerPlanningSession.class)) }),
-            @ApiResponse(responseCode = "404", description = "Not Found", content = @Content)
-    })
-    @DeleteMapping("/{idSession}")
-    public ResponseEntity<PokerPlanningSession> deletePokerPlanningSession(
-            @PathVariable("idSession") String idSession
-    ) {
-        Optional<PokerPlanningSession> optionalSession = pokerPlanningSessionService.deletePokerPlanningSession(UUID.fromString(idSession));
+    @Override
+    public ResponseEntity<PokerPlanningSessionDto> sessionsIdSessionDelete(String idSession) {
+        Optional<PokerPlanningSessionDto> optionalSession = pokerPlanningSessionService.deletePokerPlanningSession(idSession);
 
         return optionalSession.map(session -> new ResponseEntity<>(session, HttpStatus.OK))
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
 
+    @Override
+    public ResponseEntity<List<MemberDto>> sessionsIdSessionMembersGet(String idSession) {
+        List<MemberDto> members = sessionMemberService.getSessionMembers(idSession);
+        return CollectionUtils.isEmpty(members)
+                ? new ResponseEntity<>(members, HttpStatus.NO_CONTENT)
+                : new ResponseEntity<>(members, HttpStatus.OK);
+    }
 
+    @Override
+   public ResponseEntity<MemberDto> sessionsIdSessionMembersPost(String idSession, MemberDto member) {
+        MemberDto joinedMember = sessionMemberService.joinToTheSession(idSession, member);
+
+        return new ResponseEntity<>(joinedMember, HttpStatus.CREATED);
+    }
+
+    @Override
+    public ResponseEntity<MemberDto> sessionsIdSessionMembersIdMemberDelete(String idSession, String idMember) {
+        Optional<MemberDto> optionalMember = sessionMemberService.logoutSessionMember(idSession, idMember);
+
+        return optionalMember
+                .map(member -> new ResponseEntity<>(member, HttpStatus.OK))
+                .orElse(new ResponseEntity<>(HttpStatus.NO_CONTENT));
+    }
+
+    @Override
+    public ResponseEntity<UserStoryDto> sessionsIdSessionStoriesPost(String idSession, UserStoryDto userStory) {
+        UserStoryDto createdUserStory = userStoryService.createUserStory(idSession, userStory);
+
+        return new ResponseEntity<>(createdUserStory, HttpStatus.CREATED);
+    }
+
+    @Override
+    public ResponseEntity<List<UserStoryDto>> sessionsIdSessionStoriesGet(String idSession) {
+        List<UserStoryDto> userStories = userStoryService.getSessionUserStories(idSession);
+        return new ResponseEntity<>(userStories, HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<UserStoryDto> sessionsIdSessionStoriesIdUserStoryPut(String idSession, String idUserStory, UserStoryDto userStory) {
+        UserStoryDto updatedUserStory = userStoryService.updateUserStory(idSession, userStory);
+
+        return new ResponseEntity<>(updatedUserStory, HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<UserStoryDto> sessionsIdSessionStoriesIdUserStoryDelete(String idSession, String idUserStory) {
+        UserStoryDto deletedUserStory = userStoryService.deleteUserStory(idUserStory);
+        return new ResponseEntity<>(deletedUserStory, HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<List<VoteDto>> sessionsIdSessionVotesGet(String idSession) {
+        List<VoteDto> votes = voteService.getVotes(idSession);
+        return new ResponseEntity<>(votes, HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<VoteDto> sessionsIdSessionVotesPost(String idSession, VoteDto vote) {
+        VoteDto savedVote = voteService.emitVote(idSession, vote);
+
+        return new ResponseEntity<>(savedVote, HttpStatus.CREATED);
+    }
 }

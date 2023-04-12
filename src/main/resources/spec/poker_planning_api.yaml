@@ -3,9 +3,6 @@ info:
   title: Poker Planning API
   description: REST API to support a poker planning session
   version: 0.0.1
-servers:
-  - url: 'http://localhost:8080'
-    description: dev
 paths:
   /sessions:
     get:
@@ -111,7 +108,7 @@ paths:
     parameters:
       - $ref: "#/components/parameters/IdSessionParam"
       - $ref: "#/components/parameters/IdMemberParam"
-    get:
+    delete:
       summary: Logout a Member
       tags:
         - session management
@@ -121,9 +118,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/Member"
+                $ref: "#/components/schemas/Member"
         '204':
           description: No content
 
@@ -142,7 +137,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/Member"
+                  $ref: "#/components/schemas/UserStory"
         '404':
           description: Not found
     post:
@@ -151,7 +146,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/Member"
+              $ref: "#/components/schemas/UserStory"
       tags:
         - user stories
       responses:
@@ -160,7 +155,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Member"
+                $ref: "#/components/schemas/UserStory"
         '404':
           description: Not found
 
@@ -174,7 +169,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/Member"
+              $ref: "#/components/schemas/UserStory"
       tags:
         - user stories
       responses:
@@ -183,7 +178,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Member"
+                $ref: "#/components/schemas/UserStory"
         '404':
           description: Not found
     delete:
@@ -196,7 +191,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Member"
+                $ref: "#/components/schemas/UserStory"
         '403':
           description: Forbidden
         '404':
@@ -206,7 +201,7 @@ paths:
     parameters:
       - $ref: "#/components/parameters/IdSessionParam"
     get:
-      summary: List of votes emmited
+      summary: List of votes emitted
       tags:
         - votations
       responses:
@@ -292,7 +287,7 @@ components:
           enum:
             - PENDING
             - VOTING
-            - VOTE
+            - VOTED
           default: PENDING
     Vote:
       type: object

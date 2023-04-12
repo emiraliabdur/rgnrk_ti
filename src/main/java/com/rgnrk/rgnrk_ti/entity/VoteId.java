@@ -2,13 +2,14 @@ package com.rgnrk.rgnrk_ti.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
-import java.util.UUID;
 
+@NoArgsConstructor
 @AllArgsConstructor
 @Data
 public class VoteId implements Serializable {
-    private UUID memberId;
-    private UUID userStoryId;
+    private String memberId;
+    private String userStoryId;
 }

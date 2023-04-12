@@ -1,4 +1,4 @@
-package com.rgnrk.rgnrk_ti.service;
+package com.rgnrk.rgnrk_ti.service.impl;
 
 import com.rgnrk.rgnrk_ti.entity.UserStoryEntity;
 import com.rgnrk.rgnrk_ti.exceptions.SessionNotFoundException;
@@ -8,6 +8,7 @@ import com.rgnrk.rgnrk_ti.mapper.UserStoryMapper;
 import com.rgnrk.rgnrk_ti.model.UserStoryDto;
 import com.rgnrk.rgnrk_ti.repository.SessionRepository;
 import com.rgnrk.rgnrk_ti.repository.UserStoryRepository;
+import com.rgnrk.rgnrk_ti.service.UserStoryService;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -20,13 +21,13 @@ import static com.rgnrk.rgnrk_ti.model.UserStoryDto.StatusEnum.PENDING;
 @Slf4j
 @Service
 @Transactional
-public class UserStoryService {
+public class UserStoryServiceImpl implements UserStoryService {
 
     private final UserStoryRepository userStoryRepository;
     private final SessionRepository sessionRepository;
     private final UserStoryMapper userStoryMapper;
 
-    public UserStoryService(UserStoryRepository userStoryRepository, SessionRepository sessionRepository, UserStoryMapper userStoryMapper) {
+    public UserStoryServiceImpl(UserStoryRepository userStoryRepository, SessionRepository sessionRepository, UserStoryMapper userStoryMapper) {
         this.userStoryRepository = userStoryRepository;
         this.sessionRepository = sessionRepository;
         this.userStoryMapper = userStoryMapper;

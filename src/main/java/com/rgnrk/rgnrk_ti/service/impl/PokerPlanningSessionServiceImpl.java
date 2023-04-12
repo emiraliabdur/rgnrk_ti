@@ -1,12 +1,13 @@
-package com.rgnrk.rgnrk_ti.service;
+package com.rgnrk.rgnrk_ti.service.impl;
 
 import com.rgnrk.rgnrk_ti.entity.SessionEntity;
 import com.rgnrk.rgnrk_ti.mapper.PokerPlanningSessionMapper;
+import com.rgnrk.rgnrk_ti.model.PokerPlanningSessionDto;
 import com.rgnrk.rgnrk_ti.repository.MemberRepository;
 import com.rgnrk.rgnrk_ti.repository.SessionRepository;
 import com.rgnrk.rgnrk_ti.repository.UserStoryRepository;
-import com.rgnrk.rgnrk_ti.model.PokerPlanningSessionDto;
 import com.rgnrk.rgnrk_ti.repository.VoteRepository;
+import com.rgnrk.rgnrk_ti.service.PokerPlanningSessionService;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -17,7 +18,7 @@ import java.util.Optional;
 @Slf4j
 @Service
 @Transactional
-public class PokerPlanningSessionServiceImpl {
+public class PokerPlanningSessionServiceImpl implements PokerPlanningSessionService {
 
     private final SessionRepository sessionRepository;
     private final MemberRepository memberRepository;
