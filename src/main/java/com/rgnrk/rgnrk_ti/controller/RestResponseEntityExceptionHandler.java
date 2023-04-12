@@ -16,20 +16,20 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(value = { SessionNotFoundException.class, UserStoryNotFoundException.class })
     public ErrorResult handleNotFoundException(Exception ex, WebRequest request) {
-        return new ErrorResult(ex.getMessage());
+        return new ErrorResult(ex.getMessage(), request.getDescription(false));
     }
 
     @ResponseBody
     @ResponseStatus(HttpStatus.FORBIDDEN)
     @ExceptionHandler(value = { UserStoryForbiddenToDeleteException.class})
     protected ErrorResult handleForbiddenAccess(Exception ex, WebRequest request) {
-        return new ErrorResult(ex.getMessage());
+        return new ErrorResult(ex.getMessage(), request.getDescription(false));
     }
 
     @ResponseBody
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(value = { VotingIsClosedException.class})
     protected ErrorResult handleBadRequest(Exception ex, WebRequest request) {
-        return new ErrorResult(ex.getMessage());
+        return new ErrorResult(ex.getMessage(), request.getDescription(false));
     }
 }
