@@ -23,8 +23,8 @@ public class PokerPlanningSessionServiceImpl implements PokerPlanningSessionServ
     private final SessionRepository sessionRepository;
     private final MemberRepository memberRepository;
     private final UserStoryRepository userStoryRepository;
-    private final PokerPlanningSessionMapper sessionMapper;
     private final VoteRepository voteRepository;
+    private final PokerPlanningSessionMapper sessionMapper;
 
     public PokerPlanningSessionServiceImpl(SessionRepository sessionRepository, MemberRepository memberRepository,
                                            UserStoryRepository userStoryRepository, PokerPlanningSessionMapper sessionMapper, VoteRepository voteRepository) {
@@ -58,8 +58,10 @@ public class PokerPlanningSessionServiceImpl implements PokerPlanningSessionServ
     }
 
     public Optional<PokerPlanningSessionDto> deletePokerPlanningSession(String sessionId) {
+
         Optional<SessionEntity> sessionEntity = sessionRepository.findById(sessionId);
         if (sessionEntity.isPresent()) {
+            log.info("Deleting poker planning session with id {}", sessionId);
             voteRepository.deleteAllBySessionId(sessionId);
             memberRepository.deleteAllBySessionId(sessionId);
             userStoryRepository.deleteAllBySessionId(sessionId);
