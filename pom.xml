@@ -155,8 +155,8 @@
                             <generatorName>spring</generatorName>
                             <library>spring-boot</library>
                             <modelNameSuffix>Dto</modelNameSuffix>
-                            <generateApiTests>false</generateApiTests>
-                            <generateModelTests>false</generateModelTests>
+                            <generateApiTests>true</generateApiTests>
+                            <generateModelTests>true</generateModelTests>
                             <configOptions>
                                 <basePackage>com.rgnrk.rgnrk_ti</basePackage>
                                 <modelPackage>com.rgnrk.rgnrk_ti.model</modelPackage>
