@@ -96,11 +96,13 @@ public class SessionManagementController implements SessionsApi {
     @Override
     public ResponseEntity<List<UserStoryDto>> sessionsIdSessionStoriesGet(String idSession) {
         List<UserStoryDto> userStories = userStoryService.getSessionUserStories(idSession);
+
         return new ResponseEntity<>(userStories, HttpStatus.OK);
     }
 
     @Override
     public ResponseEntity<UserStoryDto> sessionsIdSessionStoriesIdUserStoryPut(String idSession, String idUserStory, UserStoryDto userStory) {
+        userStory.setIdUserStory(idUserStory);
         UserStoryDto updatedUserStory = userStoryService.updateUserStory(idSession, userStory);
 
         return new ResponseEntity<>(updatedUserStory, HttpStatus.OK);
@@ -109,12 +111,14 @@ public class SessionManagementController implements SessionsApi {
     @Override
     public ResponseEntity<UserStoryDto> sessionsIdSessionStoriesIdUserStoryDelete(String idSession, String idUserStory) {
         UserStoryDto deletedUserStory = userStoryService.deleteUserStory(idUserStory);
+
         return new ResponseEntity<>(deletedUserStory, HttpStatus.OK);
     }
 
     @Override
     public ResponseEntity<List<VoteDto>> sessionsIdSessionVotesGet(String idSession) {
-        List<VoteDto> votes = voteService.getVotes(idSession);
+        List<VoteDto> votes = voteService.getVisibleVotes(idSession);
+
         return new ResponseEntity<>(votes, HttpStatus.OK);
     }
 

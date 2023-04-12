@@ -16,6 +16,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+import static com.rgnrk.rgnrk_ti.model.UserStoryDto.StatusEnum.*;
+
 @Slf4j
 @Service
 @Transactional
@@ -33,8 +35,8 @@ public class VoteServiceImpl implements VoteService {
         this.userStoryRepository = userStoryRepository;
     }
 
-    public List<VoteDto> getVotes(String sessionId) {
-        List<VoteEntity> voteEntities = voteRepository.getAllBySessionId(sessionId);
+    public List<VoteDto> getVisibleVotes(String sessionId) {
+        List<VoteEntity> voteEntities = voteRepository.getAllBySessionIdAndUserStoryStatusIn(sessionId, List.of(PENDING, VOTED));
         log.info("Returning {} votes for the session {}", voteEntities.size(), sessionId);
 
         return voteMapper.toModels(voteEntities);
@@ -54,7 +56,7 @@ public class VoteServiceImpl implements VoteService {
     }
 
     private void markStoryAsVoting(VoteDto vote) {
-        userStoryRepository.setStatus(StatusEnum.VOTING, vote.getIdUserStory());
+        userStoryRepository.setStatus(VOTING, vote.getIdUserStory());
     }
 
     private void checkIfSessionExists(String sessionId) {
@@ -65,7 +67,7 @@ public class VoteServiceImpl implements VoteService {
 
     private void checkIfVotingAllowed(String userStoryId) {
         StatusEnum status = userStoryRepository.findStatusById(userStoryId);
-        if (status == StatusEnum.VOTED) {
+        if (status == VOTED) {
             throw new VotingIsClosedException(userStoryId);
         }
     }

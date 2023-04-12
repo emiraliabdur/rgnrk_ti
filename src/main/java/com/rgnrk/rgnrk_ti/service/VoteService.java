@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface VoteService {
 
-    List<VoteDto> getVotes(String sessionId);
+    List<VoteDto> getVisibleVotes(String sessionId);
 
     VoteDto emitVote(String sessionId, VoteDto vote);
 }
