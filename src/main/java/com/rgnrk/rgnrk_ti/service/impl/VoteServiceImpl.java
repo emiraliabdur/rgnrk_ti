@@ -47,8 +47,14 @@ public class VoteServiceImpl implements VoteService {
         log.info("Member {} emits vote for the user story {}", vote.getIdMember(), vote.getIdUserStory());
         VoteEntity entity = voteMapper.toEntity(vote);
         VoteEntity savedVoteEntity = voteRepository.save(entity);
+        markStoryAsVoting(vote);
+
         return voteMapper.toModel(savedVoteEntity);
 
+    }
+
+    private void markStoryAsVoting(VoteDto vote) {
+        userStoryRepository.setStatus(StatusEnum.VOTING, vote.getIdUserStory());
     }
 
     private void checkIfSessionExists(String sessionId) {

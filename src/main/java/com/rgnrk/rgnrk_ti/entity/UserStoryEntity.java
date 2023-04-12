@@ -1,10 +1,7 @@
 package com.rgnrk.rgnrk_ti.entity;
 
 import com.rgnrk.rgnrk_ti.model.UserStoryDto.StatusEnum;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -25,6 +22,7 @@ public class UserStoryEntity {
     @Column(name = "description")
     private String description;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "status")
     private StatusEnum status;
 }
