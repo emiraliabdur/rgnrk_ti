@@ -15,7 +15,7 @@ public interface VoteRepository extends JpaRepository<VoteEntity, String> {
             " left join UserStoryEntity us on us.id = v.userStoryId " +
             " where us.sessionId = :sessionId and us.status in :statuses"
     )
-    List<VoteEntity> getAllBySessionIdAndUserStoryStatusIn(String sessionId, Collection<StatusEnum> statuses);
+    List<VoteEntity> findAllBySessionIdAndUserStoryStatusIn(String sessionId, Collection<StatusEnum> statuses);
 
     @Modifying
     @Query("delete from VoteEntity v " +
@@ -23,4 +23,10 @@ public interface VoteRepository extends JpaRepository<VoteEntity, String> {
     )
     void deleteAllBySessionId(String sessionId);
 
+    @Modifying
+    @Query("delete from VoteEntity v " +
+            " where v.userStoryId in (select u.id from UserStoryEntity u where u.sessionId = :sessionId)" +
+            " and v.memberId = :memberId"
+    )
+    void deleteAllBySessionIdAndMemberId(String sessionId, String memberId);
 }

@@ -20,6 +20,7 @@ create table user_story
     session_id varchar(36) not null,
     description varchar(255) not null,
     status varchar(32) not null,
+    foreign key(session_id) references session(id),
     primary key(id)
 );
 
@@ -30,8 +31,7 @@ create table vote
     vote_value varchar(64),
     foreign key(member_id) references member(id),
     foreign key(user_story_id) references user_story(id),
-    primary key(member_id, user_story_id),
-    unique(member_id, user_story_id)
+    primary key(member_id, user_story_id)
 );
 
 

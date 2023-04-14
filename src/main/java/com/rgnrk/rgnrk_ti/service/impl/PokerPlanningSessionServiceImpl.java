@@ -8,9 +8,9 @@ import com.rgnrk.rgnrk_ti.repository.SessionRepository;
 import com.rgnrk.rgnrk_ti.repository.UserStoryRepository;
 import com.rgnrk.rgnrk_ti.repository.VoteRepository;
 import com.rgnrk.rgnrk_ti.service.PokerPlanningSessionService;
-import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -63,8 +63,8 @@ public class PokerPlanningSessionServiceImpl implements PokerPlanningSessionServ
         if (sessionEntity.isPresent()) {
             log.info("Deleting poker planning session with id {}", sessionId);
             voteRepository.deleteAllBySessionId(sessionId);
-            memberRepository.deleteAllBySessionId(sessionId);
             userStoryRepository.deleteAllBySessionId(sessionId);
+            memberRepository.deleteAllBySessionId(sessionId);
             sessionRepository.deleteById(sessionId);
         }
 

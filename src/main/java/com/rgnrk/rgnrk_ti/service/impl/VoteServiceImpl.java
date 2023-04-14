@@ -10,9 +10,9 @@ import com.rgnrk.rgnrk_ti.repository.SessionRepository;
 import com.rgnrk.rgnrk_ti.repository.UserStoryRepository;
 import com.rgnrk.rgnrk_ti.repository.VoteRepository;
 import com.rgnrk.rgnrk_ti.service.VoteService;
-import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -36,7 +36,9 @@ public class VoteServiceImpl implements VoteService {
     }
 
     public List<VoteDto> getVisibleVotes(String sessionId) {
-        List<VoteEntity> voteEntities = voteRepository.getAllBySessionIdAndUserStoryStatusIn(sessionId, List.of(PENDING, VOTED));
+        checkIfSessionExists(sessionId);
+
+        List<VoteEntity> voteEntities = voteRepository.findAllBySessionIdAndUserStoryStatusIn(sessionId, List.of(PENDING, VOTED));
         log.info("Returning {} votes for the session {}", voteEntities.size(), sessionId);
 
         return voteMapper.toModels(voteEntities);
@@ -53,6 +55,12 @@ public class VoteServiceImpl implements VoteService {
 
         return voteMapper.toModel(savedVoteEntity);
 
+    }
+
+    @Override
+    public void deleteVotesInSession(String sessionId) {
+        log.info("About to delete all votes in the session {}", sessionId);
+        voteRepository.deleteAllBySessionId(sessionId);
     }
 
     private void markStoryAsVoting(VoteDto vote) {

@@ -6,10 +6,11 @@ import com.rgnrk.rgnrk_ti.mapper.MemberMapper;
 import com.rgnrk.rgnrk_ti.model.MemberDto;
 import com.rgnrk.rgnrk_ti.repository.MemberRepository;
 import com.rgnrk.rgnrk_ti.repository.SessionRepository;
+import com.rgnrk.rgnrk_ti.repository.VoteRepository;
 import com.rgnrk.rgnrk_ti.service.SessionMemberService;
-import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -19,11 +20,14 @@ import java.util.Optional;
 @Transactional
 public class SessionMemberServiceImpl implements SessionMemberService {
 
+    private final VoteRepository voteRepository;
     private final SessionRepository sessionRepository;
     private final MemberRepository memberRepository;
     private final MemberMapper memberMapper;
 
-    public SessionMemberServiceImpl(SessionRepository sessionRepository, MemberRepository memberRepository, MemberMapper memberMapper) {
+    public SessionMemberServiceImpl(VoteRepository voteRepository, SessionRepository sessionRepository,
+                                    MemberRepository memberRepository, MemberMapper memberMapper) {
+        this.voteRepository = voteRepository;
         this.sessionRepository = sessionRepository;
         this.memberRepository = memberRepository;
         this.memberMapper = memberMapper;
@@ -59,7 +63,10 @@ public class SessionMemberServiceImpl implements SessionMemberService {
         log.info("Member {} is about to leave {} poker planning session", memberId, sessionId);
 
         Optional<MemberEntity> optionalEntity = memberRepository.findByIdAndSessionId(memberId, sessionId);
-        optionalEntity.ifPresent(memberRepository::delete);
+        optionalEntity.ifPresent(entity -> {
+            voteRepository.deleteAllBySessionIdAndMemberId(sessionId, memberId);
+            memberRepository.delete(entity);
+        });
 
         return optionalEntity.map(memberMapper::toModel);
     }

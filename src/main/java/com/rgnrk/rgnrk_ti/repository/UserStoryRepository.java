@@ -1,7 +1,6 @@
 package com.rgnrk.rgnrk_ti.repository;
 
 import com.rgnrk.rgnrk_ti.entity.UserStoryEntity;
-import com.rgnrk.rgnrk_ti.model.UserStoryDto;
 import com.rgnrk.rgnrk_ti.model.UserStoryDto.StatusEnum;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;

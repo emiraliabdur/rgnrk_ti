@@ -9,4 +9,6 @@ public interface VoteService {
     List<VoteDto> getVisibleVotes(String sessionId);
 
     VoteDto emitVote(String sessionId, VoteDto vote);
+
+    void deleteVotesInSession(String sessionId);
 }
